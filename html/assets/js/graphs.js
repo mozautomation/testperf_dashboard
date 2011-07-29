@@ -136,7 +136,7 @@ function show_charts(params, dname, pname, wname){
 
         //Declare writes and writebytes datasets
         wseries = {'name': 'Writes',
-                    'data': d_points
+                    'data': w_points
                   }
         wbseries = {'name': 'Write Size',
                     'yAxis': 1,
@@ -168,26 +168,26 @@ function show_charts(params, dname, pname, wname){
                 name = perfdata["name"];
                 if(perfdata["type"] == "diskIO"){
                     if(typeof dname == 'undefined' || dname == null){
-                        if(perfdata["reads"] != 'undefined'){
+                        if(typeof perfdata["reads"] != 'undefined'){
                             reads += perfdata["reads"];
                             read_bytes += perfdata["read_bytes"];
                         }
                     }else{
                         if(name == dname){
-                            if(perfdata["reads"] != 'undefined'){
+                            if(typeof perfdata["reads"] != 'undefined'){
                                 reads += perfdata["reads"];
                                 read_bytes += perfdata["read_bytes"];
                             }
                         }
                     }
                     if (typeof wname == 'undefined' || wname == null){
-                        if(perfdata["writes"] != 'undefined'){
+                        if(typeof perfdata["writes"] != 'undefined'){
                             writes += perfdata["writes"];
                             write_bytes += perfdata["write_bytes"];
                         }
                     }else{
                         if(name == wname){
-                            if(perfdata["writes"] != 'undefined'){
+                            if(typeof perfdata["writes"] != 'undefined'){
                                 writes += perfdata["writes"];
                                 write_bytes += perfdata["write_bytes"];
                             }
@@ -456,7 +456,7 @@ function show_charts(params, dname, pname, wname){
 
             if(search_name != "none selected"){
                 //Do something to modify the data
-                show_charts(values, dname, search_name, wname);
+                show_charts(values, dname, search_name, dname);
             }
         });
         ////Change graph data! When we detect someone is asking for a specific name, do something specific.
