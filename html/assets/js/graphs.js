@@ -15,6 +15,8 @@ function show_loading(){
     $('#content-main').html("<div id='loading' style='margin:0 auto; padding-top:20px;'><center><span style='font-weight:200; font-size:200%;'>Loading...</span><br/><img height='32' width='32' src='./assets/images/loading.gif' alt='' /></center></div>");
     $('#errors').html("");
     $('#container').html("");
+    $('#container2').html("");
+    $('#container3').html("");
 }
 
 function hide_loading(){
@@ -77,7 +79,7 @@ function to_hours(value){
 
 //Each function below represents a graph to be displayed
 
-function show_charts(params, dname, pname){
+function show_charts(params, dname, pname, wname){
     //Testperf Charts (DiskIOs and Pagefaults)
     show_loading(); //Show loading div to keep user happy
 
@@ -102,16 +104,28 @@ function show_charts(params, dname, pname){
         resourceURL += new_params[x][1] + "=" + new_params[x][0]
     }
 
-    dgraph_title = "DiskIOs";
+    wgraph_title = "DiskIOs - Writes";
+    dgraph_title = "DiskIOs - Reads";
     pgraph_title = "Pagefaults";
 
     $.getJSON(resourceURL, function(data) {
-        dgraph_data = [];
-        pgraph_data = [];
+        //Start by declaring sets to hold our data from the database
 
-        d_points = []
-        b_points = []
-        p_points = []
+        //Data for DiskIO Graph
+        dgraph_data = [];
+        d_points = [];
+        b_points = [];
+
+        //Data for Pagefaults Graph
+        pgraph_data = [];
+        p_points = [];
+
+        //Data for Writes Graph
+        wgraph_data = [];
+        w_points = [];
+        wb_points = [];
+
+        //Declare diskio and readbytes datasets
         dseries = {'name': 'Disk IOs',
                     'data': d_points
                   }
@@ -119,11 +133,23 @@ function show_charts(params, dname, pname){
                     'yAxis': 1,
                     'data': b_points
                   }
+
+        //Declare writes and writebytes datasets
+        wseries = {'name': 'Writes',
+                    'data': d_points
+                  }
+        wbseries = {'name': 'Write Size',
+                    'yAxis': 1,
+                    'data': wb_points
+                  }
+
+
+        //Declare pagefaults dataset
         pseries = {'name': 'Page Faults',
                    'data':  p_points,
                   }
 
-        //Group data
+        //Gather and Group data from the database
         for (var datapoint in data){
             var date = data[datapoint]["date"]
             parseDate = date.split("-");
@@ -133,6 +159,8 @@ function show_charts(params, dname, pname){
 
             reads = 0;
             read_bytes = 0;
+            writes = 0;
+            write_bytes = 0;
             pagefaults = 0;
             for(var item in data[datapoint]["perfdata"]){
                 var perfdata = data[datapoint]["perfdata"][item];
@@ -140,12 +168,29 @@ function show_charts(params, dname, pname){
                 name = perfdata["name"];
                 if(perfdata["type"] == "diskIO"){
                     if(typeof dname == 'undefined' || dname == null){
-                        reads += perfdata["reads"];
-                        read_bytes += perfdata["read_bytes"];
-                    }else{
-                        if(name == dname){
+                        if(perfdata["reads"] != 'undefined'){
                             reads += perfdata["reads"];
                             read_bytes += perfdata["read_bytes"];
+                        }
+                    }else{
+                        if(name == dname){
+                            if(perfdata["reads"] != 'undefined'){
+                                reads += perfdata["reads"];
+                                read_bytes += perfdata["read_bytes"];
+                            }
+                        }
+                    }
+                    if (typeof wname == 'undefined' || wname == null){
+                        if(perfdata["writes"] != 'undefined'){
+                            writes += perfdata["writes"];
+                            write_bytes += perfdata["write_bytes"];
+                        }
+                    }else{
+                        if(name == wname){
+                            if(perfdata["writes"] != 'undefined'){
+                                writes += perfdata["writes"];
+                                write_bytes += perfdata["write_bytes"];
+                            }
                         }
                     }
                 }else if(perfdata["type"] == "pagefaults"){
@@ -158,14 +203,27 @@ function show_charts(params, dname, pname){
                     }
                 }
             }
-            b_point = [Date.UTC(year, month, day), read_bytes, name];
-            d_point = [Date.UTC(year, month, day), reads, name];
-            p_point = [Date.UTC(year, month, day), pagefaults, name];
 
+            //Declare data points using the data
+            b_point = [Date.UTC(year, month, day), read_bytes, name];
             b_points.push(b_point);
+
+            d_point = [Date.UTC(year, month, day), reads, name];
             d_points.push(d_point);
+
+            wb_point = [Date.UTC(year, month, day), write_bytes, name];
+            wb_points.push(wb_point);
+            w_point = [Date.UTC(year, month, day), writes, name];
+            w_points.push(w_point);
+
+            p_point = [Date.UTC(year, month, day), pagefaults, name];
             p_points.push(p_point);
         }
+
+        //Push the series into their respective graphs
+        wgraph_data.push(wseries);
+        wgraph_data.push(wbseries); //Byte size data
+
         dgraph_data.push(dseries);
         dgraph_data.push(bseries); //Byte size data
 
@@ -175,13 +233,123 @@ function show_charts(params, dname, pname){
         hide_loading();
 
 
-
         //Begin Line Chart 1
         var chart;
         jQuery(document).ready(function() {
             chart = new Highcharts.Chart({
                 chart: {
+                    renderTo: 'container',
+                    type: 'spline'
+                },
+                title: {
+                    text: 'Testperf - '+dgraph_title
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%b %e',
+                        year: '%Y'
+                    }
+                },
+                yAxis: [
+                    {
+                        title: {
+                            text: 'Number'
+                        },
+                        min: 0
+                    },
+                    {
+                        title:{
+                            text: 'Bytes'
+                        },
+                        opposite: true
+                    }
+                ],
+                tooltip: {
+                    formatter: function() {
+                        var unit = {
+                            'Disk IOs': 'Disk IOs (reads)',
+                            'Disk IO Size': 'bytes',
+                        }[this.series.name];
+
+                        return ''+
+                            //this.x +': '+ this.y +' '+ unit;
+                            this.y +' '+ unit;
+                    }
+                    //formatter: function() {
+                    //        return '<b>'+ this.series.name +'</b><br/>'+
+                    //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
+                    //}
+                },
+                series: dgraph_data
+            });
+        });
+        //End Line Chart
+        //Begin Line Chart 2
+        var chart2;
+        jQuery(document).ready(function() {
+            chart2 = new Highcharts.Chart({
+                chart: {
                     renderTo: 'container2',
+                    type: 'spline'
+                },
+                title: {
+                    text: 'Testperf - '+wgraph_title
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%b %e',
+                        year: '%Y'
+                    }
+                },
+                yAxis: [
+                    {
+                        title: {
+                            text: 'Number Writes'
+                        },
+                        min: 0
+                    },
+                    {
+                        title:{
+                            text: 'Bytes'
+                        },
+                        opposite: true
+                    }
+                ],
+                tooltip: {
+                    formatter: function() {
+                        var unit = {
+                            'Writes': 'Disk IOs (writes)',
+                            'Write Size': 'bytes',
+                        }[this.series.name];
+
+                        return ''+
+                            //this.x +': '+ this.y +' '+ unit;
+                            this.y +' '+ unit;
+                    }
+                    //formatter: function() {
+                    //        return '<b>'+ this.series.name +'</b><br/>'+
+                    //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
+                    //}
+                },
+                series: wgraph_data
+            });
+        });
+        //End Line Chart
+
+        //Begin Line Chart 3
+        var chart3;
+        jQuery(document).ready(function() {
+            chart3 = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'container3',
                     type: 'spline'
                 },
                 title: {
@@ -214,72 +382,11 @@ function show_charts(params, dname, pname){
         });
         //End Line Chart
 
-        //Begin Line Chart 2
-        var chart2;
-        jQuery(document).ready(function() {
-            chart2 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'container',
-                    type: 'spline'
-                },
-                title: {
-                    text: 'Testperf - '+dgraph_title
-                },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    type: 'datetime',
-                    dateTimeLabelFormats: { // don't display the dummy year
-                        month: '%b %e',
-                        year: '%Y'
-                    }
-                },
-                yAxis: [
-                    {
-                        title: {
-                            text: 'Number'
-                        },
-                        min: 0
-                    },
-                    {
-                        title:{
-                            text: 'Bytes'
-                        },
-                        //labels: {
-                        //    formatter: function() {
-                        //        return this.value +' Bytes';
-                        //    },
-                        //    style: {
-                        //        color: '#4572A7'
-                        //    }
-                        //},
-                        opposite: true
-                    }
-                ],
-                tooltip: {
-                    formatter: function() {
-                        var unit = {
-                            'Disk IOs': 'Disk IOs (reads)',
-                            'Disk IO Size': 'bytes',
-                        }[this.series.name];
 
-                        return ''+
-                            //this.x +': '+ this.y +' '+ unit;
-                            this.y +' '+ unit;
-                    }
-                    //formatter: function() {
-                    //        return '<b>'+ this.series.name +'</b><br/>'+
-                    //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
-                    //}
-                },
-                series: dgraph_data
-            });
-        });
-        //End Line Chart
 
-        $("#container").prepend('<form id="d_nameselector"><select name="name" id="d_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
-        $("#container2").prepend('<form id="p_nameselector"><select name="name" id="p_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
+        $("#container").prepend('<form id="d_nameselector">DiskIO From: <select name="name" id="d_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
+        //$("#container2").prepend('<form id="w_nameselector"><select name="name" id="w_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
+        $("#container3").prepend('<form id="p_nameselector">Process Name: <select name="name" id="p_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
 
 
         //HACK USES GLOBAL VARIABLEs.
@@ -302,6 +409,14 @@ function show_charts(params, dname, pname){
                 $('#p_name').append('<option>'+x+'</option>');
             }
         }
+        //for(var x in WRITE_NAMES){
+        //    x = WRITE_NAMES[x];
+        //    if(x == wname){
+        //        $('#w_name').append('<option selected>'+x+'</option>');
+        //    }else{
+        //        $('#w_name').append('<option>'+x+'</option>');
+        //    }
+        //}
 
         //Change graph data! When we detect someone is asking for a specific name, do something specific.
         $("#d_nameselector").submit(function(event){
@@ -320,7 +435,7 @@ function show_charts(params, dname, pname){
 
             if(search_name != "none selected"){
                 //Do something to modify the data
-                show_charts(values, search_name, pname);
+                show_charts(values, search_name, pname, search_name);
             }
 
         });
@@ -341,9 +456,29 @@ function show_charts(params, dname, pname){
 
             if(search_name != "none selected"){
                 //Do something to modify the data
-                show_charts(values, dname, search_name);
+                show_charts(values, dname, search_name, wname);
             }
         });
+        ////Change graph data! When we detect someone is asking for a specific name, do something specific.
+        //$("#w_nameselector").submit(function(event){
+        //    event.preventDefault(); //Don't actually submit anywhere
+        //    var values = {};
+        //    $.each($('#data-selector').serializeArray(), function(i, field) {
+        //        values[field.name] = field.value;
+        //        //alert(field.name+": "+field.value);
+        //    });
+
+        //    var wvalues = {};
+        //    $.each($('#w_nameselector').serializeArray(), function(i, field) {
+        //        wvalues[field.name] = field.value;
+        //    });
+        //    search_name = wvalues["name"];
+
+        //    if(search_name != "none selected"){
+        //        //Do something to modify the data
+        //        show_charts(values, dname, pname, search_name);
+        //    }
+        //});
     }); //End $.getJSON
 }
 
@@ -358,6 +493,7 @@ function populate_fields(){
     fields["platform"] = {}
     fields["perfdata"] = {}
     fields["perfdata"]["diskIO"] = {}
+    fields["perfdata"]["writes"] = {}
     fields["perfdata"]["pagefaults"] = {}
 
     $.getJSON("api/perfdata/", function(data) {
@@ -411,6 +547,7 @@ function populate_fields(){
         //Options for diskio names
         DISKIO_NAMES = [];
         PAGEFAULT_NAMES = [];
+        WRITE_NAMES = [];
         for (var x in fields["perfdata"]["diskIO"]){
             //x is the name of each type
             DISKIO_NAMES.push(x);
@@ -421,6 +558,11 @@ function populate_fields(){
             //x is the name of each type
             PAGEFAULT_NAMES.push(x);
         }
+        //for (var x in fields["perfdata"]["diskIO"]){
+        //    //$('#pfname').append('<option>'+x+'</option>');
+        //    //x is the name of each type
+        //    WRITE_NAMES.push(x);
+        //}
 
 
     }); //End .getJSON()
