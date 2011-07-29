@@ -112,14 +112,15 @@ function show_charts(params, dname, pname){
         d_points = []
         b_points = []
         p_points = []
-        dseries = {'name': 'Disk IOs (reads)',
+        dseries = {'name': 'Disk IOs',
                     'data': d_points
                   }
-        bseries = {'name': 'Disk IO Size (read bytes)',
+        bseries = {'name': 'Disk IO Size',
+                    'yAxis': 1,
                     'data': b_points
                   }
         pseries = {'name': 'Page Faults',
-                   'data':  p_points
+                   'data':  p_points,
                   }
 
         //Group data
@@ -234,17 +235,43 @@ function show_charts(params, dname, pname){
                         year: '%Y'
                     }
                 },
-                yAxis: {
-                    title: {
-                        text: 'Number'
+                yAxis: [
+                    {
+                        title: {
+                            text: 'Number'
+                        },
+                        min: 0
                     },
-                    min: 0
-                },
+                    {
+                        title:{
+                            text: 'Bytes'
+                        },
+                        //labels: {
+                        //    formatter: function() {
+                        //        return this.value +' Bytes';
+                        //    },
+                        //    style: {
+                        //        color: '#4572A7'
+                        //    }
+                        //},
+                        opposite: true
+                    }
+                ],
                 tooltip: {
                     formatter: function() {
-                            return '<b>'+ this.series.name +'</b><br/>'+
-                            Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
+                        var unit = {
+                            'Disk IOs': 'Disk IOs (reads)',
+                            'Disk IO Size': 'bytes',
+                        }[this.series.name];
+
+                        return ''+
+                            //this.x +': '+ this.y +' '+ unit;
+                            this.y +' '+ unit;
                     }
+                    //formatter: function() {
+                    //        return '<b>'+ this.series.name +'</b><br/>'+
+                    //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
+                    //}
                 },
                 series: dgraph_data
             });
