@@ -28,26 +28,13 @@ function show_charts(params, dname, pname, wname){
   //Testperf Charts (DiskIOs and Pagefaults)
   show_loading(); //Show loading div to keep user happy
 
-  new_params = []
-  for (var x in params){
-    if (params[x] != "any"){
-      new_params.push([params[x],x]);
-    }
-  }
-
   //Build Resource URL
-  resourceURL = 'api/perfdata/';
-  var count = 0;
-  for (x in new_params){
-    if(count == 0){
-      resourceURL += "?";
-      count++;
-    }else{
-      resourceURL += "&";
-    }
-
-    resourceURL += new_params[x][1] + "=" + new_params[x][0]
-  }
+  var resourceURL = 'api/perfdata/' + 
+    Object.keys(params).filter(function(name) {
+      return (params[name] !== "any");
+    }).map(function(name) {
+      return name + "=" + params[name];
+    }).join("&");
 
   wgraph_title = "DiskIOs - Writes";
   dgraph_title = "DiskIOs - Reads";
