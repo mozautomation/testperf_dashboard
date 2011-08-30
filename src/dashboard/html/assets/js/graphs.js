@@ -24,61 +24,6 @@ function hide_loading(){
   $('#loading').html("")
 }
 
-function sortPairs(a,b){
-  //Sort function for array -- used in determining top mochitests
-  if(a[0] > b[0]){
-    return -1;
-  }
-  return 1;
-}
-function rmDupPairs(arr) {
-  //Remove duplicates from sorted tuple array (specific to show_mochitests)
-  var i;
-  len=arr.length;
-  out=[];
-  obj={};
-
-  //Mark hash table
-  for (i=0;i<len;i++) {
-    obj[arr[i][1]]=0;
-  }
-
-  //Skip over things that are marked duplicate in the hash table
-  for (i in arr) {
-    if (obj[arr[i][1]] == 0){
-      obj[arr[i][1]] = 1;
-      out.push(arr[i]);
-    }
-  }
-  return out;
-}
-
-function ISODateString(d){
-  //Get ISO Date from UTC Date
-  function pad(n){return n<10 ? '0'+n : n}
-  return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
-}
-function basename(path) {
-  //Gets basename of a path
-  return path.replace(/\\/g,'/').replace( /.*\//, '' );
-}
-
-function divide(dividend, divisor){
-  //Division function that allows division by zero (returns zero)
-  quotient = dividend/divisor;
-  if(isFinite(quotient)){
-    return quotient;
-  }
-  return 0;
-}
-
-function to_hours(value){
-  //Convert a time from seconds to hours to two decimal places
-  return Math.round(value * 100 / 60 / 60) / 100;
-}
-
-//Each function below represents a graph to be displayed
-
 function show_charts(params, dname, pname, wname){
   //Testperf Charts (DiskIOs and Pagefaults)
   show_loading(); //Show loading div to keep user happy
