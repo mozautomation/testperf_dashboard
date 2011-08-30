@@ -22,7 +22,7 @@ eslib = ESLib(ES_SERVER, config.get("database", "INDEX"), config.get("database",
 
 
 class PerfdataHandler():
-    @templeton.handlers.get_json
+    @templeton.handlers.json_response
     def GET(self):
         params,body = templeton.handlers.get_request_parms()
 
