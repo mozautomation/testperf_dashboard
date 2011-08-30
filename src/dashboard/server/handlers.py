@@ -20,6 +20,10 @@ config.read("settings.cfg")
 ES_SERVER = config.get("database", "ES_SERVER")
 eslib = ESLib(ES_SERVER, config.get("database", "INDEX"), config.get("database", "TYPE"))
 
+# "/api/" is automatically prepended to each of these
+urls = (
+ '/perfdata/?',"PerfdataHandler"
+)
 
 class PerfdataHandler():
     @templeton.handlers.json_response
@@ -47,14 +51,3 @@ class PerfdataHandler():
         #Query based on params supplied, return json
         result = eslib.query(queryparams)
         return result
-
-class NoneHandler():
-    def GET(self):
-        return "hello"
-
-# URLs go here. "/api/" will be automatically prepended to each.
-urls = ('/?',"NoneHandler",
- '/perfdata/?',"PerfdataHandler"
-)
-
-# Handler classes go here
