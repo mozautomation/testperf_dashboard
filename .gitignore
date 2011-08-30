@@ -1,2 +1,7 @@
-settings.cfg
 *.pyc
+include/
+bin/
+lib/
+src/dashboard/server/settings.cfg
+src/mozautoeslib/
+src/mozautolog/

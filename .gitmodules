@@ -1,0 +1,3 @@
+[submodule "src/templeton"]
+	path = src/templeton
+	url = git://github.com/wlach/templeton.git
