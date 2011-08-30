@@ -499,3 +499,46 @@ function populate_fields(){
 
   }); //End .getJSON()
 }
+
+$(function() {
+  var router = Router({
+    '/': {
+      on: function() {
+        $('#floatleft').html('<div>&nbsp;</div>');
+        $('#floatright').html(ich.index_rightpanel());
+        $('#nav li').removeClass('active');
+      }
+    },
+    '/diskio': {
+      on: function() {
+        $('#floatleft').html(ich.diskio_leftpanel());
+        $('#floatright').html(ich.diskio_rightpanel());
+        $('#nav li').removeClass('active');
+        $('#nav_diskio').addClass('active');
+
+        populate_fields();
+
+        //Get request from form and draw relevant graphs
+        $("#data-selector").submit(function(event){
+          event.preventDefault(); //Don't actually submit anywhere
+          var values = {};
+          $.each($('#data-selector').serializeArray(), function(i, field) {
+            values[field.name] = field.value;
+            //alert(field.name+": "+field.value);
+          });
+          show_charts(values);          
+        });
+      }
+    },
+    '/mochitest': {
+      on: function() {
+        $('#floatleft').html(ich.mochitest_leftpanel());
+        $('#floatright').html(ich.mochitest_rightpanel());        
+        $('#nav li').removeClass('active');
+        $('#nav_mochitest').addClass('active');
+      }
+    }
+  }).init('/');
+});
+
+  

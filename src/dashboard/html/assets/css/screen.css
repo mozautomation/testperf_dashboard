@@ -16,15 +16,33 @@ body{
 }
 
 #topbar{
-    height:30px;
+    height:40px;
     width:100%;
     /*background:#bcbcbc;*/
     background:#000;
+    color: #fff;
     opacity:0.8;
     border-bottom: 3px #3299BB solid;
-
-
 }
+
+#logo{
+    color:#fff;
+    font-size: 20px;
+    width: 160px;
+    float: left;
+    padding: 6px;
+}
+#logo-2{
+    color:#3299bb;
+    font-size: 20px;
+}
+
+#topbar ul#nav { padding: 12px; font-size: 14px; }
+#topbar ul#nav li { display: block; float: left; list-style: none; margin: 0 0 0 0; padding: 0; }
+#topbar ul#nav li a { line-height: 1; padding: 5px; margin: 0; color: #BBB; }
+#topbar ul#nav li a:hover { text-decoration: underline; }
+#topbar ul#nav li.active a { color: #FFF; text-decoration: underline; }
+
 #wrapper{
     margin:30px auto 0px auto;
     width:960px;
@@ -83,14 +101,6 @@ h2{
 @font-face {
 	font-family: BPreplay;
 	src: url('../fonts/BPreplay.otf');
-}
-
-
-#logo{
-    color:#1b5061;
-}
-#logo-2{
-    color:#3299bb;
 }
 
 h1 a{

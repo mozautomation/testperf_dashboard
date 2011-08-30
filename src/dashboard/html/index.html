@@ -8,107 +8,107 @@
 
     <script src="/templeton/scripts/jquery-1.6.1.min.js"></script>
     <script src="/templeton/scripts/jquery-ui-1.8.13.custom.min.js"></script>
+    <script src="assets/js/SS.min.js"></script>
+    <script src="assets/js/ICanHaz.min.js"></script>
     <script type="text/javascript" src="./assets/js/highcharts.js"></script>
     <script type="text/javascript" src="./assets/js/modules/exporting.js"></script>
 
     <title>Testperf Dashboard - Mozilla</title>
 </head>
 <body>
-<div id="topbar"></div>
+<div id="topbar">
+  <a href="#/">
+    <p id="logo">
+      testperf<span id="logo-2">ormance</span>
+    </p>
+  </a>
+  <ul id="nav">
+    <li id="nav_diskio"><a href="#/diskio">Disk I/O</a></li>
+    <li id="nav_mochitest"><a href="#/mochitest">Mochitest metrics</a></li>
+  </ul>
+</div>
 <div id="wrapper">
     <div class="clearfix floatholder">
-        <div id="floatleft">
-            <div id="content-menu">
-                <h1><a href="./" style="text-decoration:none;"><span id="logo">testperf<span id="logo-2">ormance</span></a></h1>
-                <br/>
-                <!--ul class="nav">
-                    <li><a href="#" onclick="show_loading()">Link</a></li>
-                    <li><a href="#" onclick="hide_loading()">Link</a></li>
-                    <li><a href="#" onclick="_()">Link</a></li>
-                    <li><a href="#" onclick="_()">Link</a></li>
-                </ul-->
-                <div class="formholder">
-                    <form id="data-selector">
-                        <label>Tree: </label>
-                        <select name="tree">
-                            <option>mozilla-central</option>
-                            <option selected>any</option>
-                        </select>
-
-                        <br/>
-                        <label>Test Group: </label>
-                        <select name="testgroup">
-                            <option>xperfstartup</option>
-                            <option selected>any</option>
-
-                        </select>
-
-                        <br/>
-                        <label>Test: </label>
-                        <select name="test">
-                            <option>xperfstartup</option>
-                            <option selected>any</option>
-
-                        </select>
-
-                        <br/>
-                        <label>Platform: </label>
-                        <select name="platform">
-                            <option>win32</option>
-                            <option>win64</option>
-                            <option selected>any</option>
-
-                        </select>
-
-                        <br/>
-                        <label>Build Type: </label>
-                        <select name="buildtype">
-                            <option>opt</option>
-                            <option>debug</option>
-                            <option selected>any</option>
-
-                        </select>
-
-
-                        <br/>
-                        <input type="submit" name="submit" value="submit"/>
-
-                    </form>
-
-                </div>
-            </div>
-        </div>
-        <div id="floatright">
-            <div id="content-main">
-                <h2>Testperf Dashboard</h2>
-                <p>This is the test performance dashboard! Here you can find metrics detailing pagefaults and disk I/Os.</p>
-
-            </div>
-            <div id="container"></div>
-            <div id="container2"></div>
-            <div id="container3"></div>
-
-        </div>
+        <div id="floatleft"></div>
+        <div id="floatright"></div>
     </div>
 </div>
 
 
 <script src="./assets/js/graphs.js"></script>
-<script>
-$(document).ready(function() {
-    populate_fields();
-    //Get request from form and draw relevant graphs
-    $("#data-selector").submit(function(event){
-        event.preventDefault(); //Don't actually submit anywhere
-        var values = {};
-        $.each($('#data-selector').serializeArray(), function(i, field) {
-            values[field.name] = field.value;
-            //alert(field.name+": "+field.value);
-        });
-        show_charts(values);
 
-    });
-});
+<!-- 
+     Templates
+-->
+
+<script id="index_rightpanel" type="text/html">
+  <div id="content-main">
+    <h2>Testperf Dashboard</h2>
+    <p>This is the test performance dashboard! Its purpose is to display metrics of test performance over time.
+      Follow the links on top to get the various metrics.</p>
+    <br/>
+    <p>Built by <a href="http://wiki.mozilla.org/Auto-tools">Mozilla Firefox Automation & Tools Engineering</a>. 
+      Source available on <a href="https://github.com/wlach/testperf_dashboard">github</a>.</p>
+  </div>
 </script>
+
+<script id="diskio_leftpanel" type="text/html">
+  <div id="content-menu">
+    <div class="formholder">
+      <form id="data-selector">
+        <label>Tree: </label>
+        <select name="tree">
+          <option>mozilla-central</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <label>Test Group: </label>
+        <select name="testgroup">
+          <option>xperfstartup</option>
+          <option selected>any</option>          
+        </select>
+        <br/>
+        <label>Test: </label>
+        <select name="test">
+          <option>xperfstartup</option>
+          <option selected>any</option>          
+        </select>
+        <br/>
+        <label>Platform: </label>
+        <select name="platform">
+          <option>win32</option>
+          <option>win64</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <label>Build Type: </label>
+        <select name="buildtype">
+          <option>opt</option>
+          <option>debug</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <input type="submit" name="submit" value="submit"/>        
+      </form>      
+    </div>
+  </div>
+</script>
+
+<script id="diskio_rightpanel" type="text/html">
+  <div id="content-main"><p>This particular view doesn't really work at the moment, but you can fiddle
+  with the various settings and generate some graphs if it strikes your fancy.</p></div>
+  <div id="container"></div>
+  <div id="container2"></div>
+  <div id="container3"></div>
+</script>
+
+<script id="mochitest_leftpanel" type="text/html">
+  <p>Placeholder for interactive forms</p>
+</script>
+
+<script id="mochitest_rightpanel" type="text/html">
+  <div id="content-main"><p>This is a placeholder template for the results of mdas's mochitest performance metrics</p></div>
+</script>
+
 </body>
 </html>
