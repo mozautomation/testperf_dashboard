@@ -1,15 +1,3 @@
-/*
- * graphs.js
- *
- * @author   Sam Liu <sam@ambushnetworks.com>
- * @desc     Internal
- * @depends  Jquery
- * @notes    Results output to div id "result", graphs
- *           draw to "container," all other messages
- *           go to "error."
- *
- */
-
 function show_loading(){
   //Clear the display divs and show loading gif
   $('#content-main').html("<div id='loading' style='margin:0 auto; padding-top:20px;'><center><span style='font-weight:200; font-size:200%;'>Loading...</span><br/><img height='32' width='32' src='./assets/images/loading.gif' alt='' /></center></div>");
