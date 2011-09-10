@@ -199,10 +199,6 @@ function show_charts(params, dname, pname, wname){
               //this.x +': '+ this.y +' '+ unit;
               this.y +' '+ unit;
           }
-          //formatter: function() {
-          //        return '<b>'+ this.series.name +'</b><br/>'+
-          //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
-          //}
         },
         series: dgraph_data
       });
@@ -254,10 +250,6 @@ function show_charts(params, dname, pname, wname){
               //this.x +': '+ this.y +' '+ unit;
               this.y +' '+ unit;
           }
-          //formatter: function() {
-          //        return '<b>'+ this.series.name +'</b><br/>'+
-          //        Highcharts.dateFormat('%b %e, %Y', this.x) +': '+ this.y +' times';
-          //}
         },
         series: wgraph_data
       });
@@ -329,14 +321,6 @@ function show_charts(params, dname, pname, wname){
         $('#p_name').append('<option>'+x+'</option>');
       }
     }
-    //for(var x in WRITE_NAMES){
-    //    x = WRITE_NAMES[x];
-    //    if(x == wname){
-    //        $('#w_name').append('<option selected>'+x+'</option>');
-    //    }else{
-    //        $('#w_name').append('<option>'+x+'</option>');
-    //    }
-    //}
 
     //Change graph data! When we detect someone is asking for a specific name, do something specific.
     $("#d_nameselector").submit(function(event){
@@ -344,7 +328,6 @@ function show_charts(params, dname, pname, wname){
       var values = {};
       $.each($('#data-selector').serializeArray(), function(i, field) {
         values[field.name] = field.value;
-        //alert(field.name+": "+field.value);
       });
 
       var dvalues = {};
@@ -365,7 +348,6 @@ function show_charts(params, dname, pname, wname){
       var values = {};
       $.each($('#data-selector').serializeArray(), function(i, field) {
         values[field.name] = field.value;
-        //alert(field.name+": "+field.value);
       });
 
       var pvalues = {};
@@ -379,26 +361,6 @@ function show_charts(params, dname, pname, wname){
         show_charts(values, dname, search_name, dname);
       }
     });
-    ////Change graph data! When we detect someone is asking for a specific name, do something specific.
-    //$("#w_nameselector").submit(function(event){
-    //    event.preventDefault(); //Don't actually submit anywhere
-    //    var values = {};
-    //    $.each($('#data-selector').serializeArray(), function(i, field) {
-    //        values[field.name] = field.value;
-    //        //alert(field.name+": "+field.value);
-    //    });
-
-    //    var wvalues = {};
-    //    $.each($('#w_nameselector').serializeArray(), function(i, field) {
-    //        wvalues[field.name] = field.value;
-    //    });
-    //    search_name = wvalues["name"];
-
-    //    if(search_name != "none selected"){
-    //        //Do something to modify the data
-    //        show_charts(values, dname, pname, search_name);
-    //    }
-    //});
   }); //End $.getJSON
 }
 
@@ -474,17 +436,9 @@ function populate_fields(){
     }
     //Options for pagefault names
     for (var x in fields["perfdata"]["pagefaults"]){
-      //$('#pfname').append('<option>'+x+'</option>');
       //x is the name of each type
       PAGEFAULT_NAMES.push(x);
     }
-    //for (var x in fields["perfdata"]["diskIO"]){
-    //    //$('#pfname').append('<option>'+x+'</option>');
-    //    //x is the name of each type
-    //    WRITE_NAMES.push(x);
-    //}
-
-
   }); //End .getJSON()
 }
 
@@ -512,7 +466,6 @@ $(function() {
           var values = {};
           $.each($('#data-selector').serializeArray(), function(i, field) {
             values[field.name] = field.value;
-            //alert(field.name+": "+field.value);
           });
           show_charts(values);          
         });
@@ -529,4 +482,3 @@ $(function() {
   }).init('/');
 });
 
-  
