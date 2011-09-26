@@ -101,11 +101,51 @@
 </script>
 
 <script id="mochitest_leftpanel" type="text/html">
-  <p>Placeholder for interactive forms</p>
+  <div id="content-menu">
+    <div class="formholder">
+      <form id="data-selector">
+        <label>Tree: </label>
+        <select name="tree">
+          <option>mozilla-central</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <label>Test Group: </label>
+        <select name="testgroup">
+          <option>mochitest-perf</option>
+          <option selected>any</option>          
+        </select>
+        <br/>
+        <label>Test: </label>
+        <select name="test">
+          <option selected>any</option>          
+        </select>
+        <br/>
+        <label>Platform: </label>
+        <select name="platform">
+          <option>win32</option>
+          <option>linux</option>
+          <option>macosx64</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <label>Build Type: </label>
+        <select name="buildtype">
+          <option>opt</option>
+          <option>debug</option>
+          <option selected>any</option>
+        </select>
+        <br/>
+        <input type="submit" name="submit" value="submit"/>        
+      </form>      
+    </div>
+  </div>
 </script>
 
 <script id="mochitest_rightpanel" type="text/html">
   <div id="content-main"><p>This is a placeholder template for the results of mdas's mochitest performance metrics</p></div>
+  <div id="container-run"></div>
+  <div id="container-load"></div>
 </script>
 
 
