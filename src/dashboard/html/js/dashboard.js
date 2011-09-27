@@ -1,3 +1,7 @@
+/*
+TODO: this code needs some *serious* refactoring.
+    - Received suggestion to use knockout.js to bind ui changes to changes in your data model: http://knockoutjs.com/
+*/
 function show_loading(){
   //Clear the display divs and show loading gif
   $('#content-main').html("<div id='loading' style='margin:0 auto; padding-top:20px;'><center><span style='font-weight:200; font-size:200%;'>Loading...</span><br/><img height='32' width='32' src='./assets/images/loading.gif' alt='' /></center></div>");
@@ -515,8 +519,8 @@ function show_mochi_charts(params, names){
 //Chart is now made, so update DOM:
 
 
-    $("#container-run").prepend('<form id="run_nameselector">Process Name: <select name="name" id="run_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
-    $("#container-load").prepend('<form id="load_nameselector">Process Name: <select name="name" id="load_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
+    $("#container-run").prepend('<form id="run_nameselector">Test Name: <select name="name" id="run_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
+    $("#container-load").prepend('<form id="load_nameselector">Test Name: <select name="name" id="load_name"><option>none selected</option></select><input type="submit" name="submit" value="Change data"/></form>');
 
 
     //HACK USES GLOBAL VARIABLEs.
@@ -636,6 +640,7 @@ function populate_fields(){
 
 
     //Now we write into the form all the different option types
+    //TODO: not convinced this actually works
     for(var x in fields["tree"]){
       $('#tree').append('<option>'+x+'</option>');
     }
